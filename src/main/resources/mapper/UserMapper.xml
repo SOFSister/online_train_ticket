@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="cn.feedsheep.online_train_ticket.mapper.UserMapper">
+
+
+    <insert id="register">
+        INSERT INTO `online_train_ticket`.`user`(`user_name`, `pwd`, `email`, `create_time`, `id_card`, `phone`)
+        VALUES (#{userName}, #{pwd}, #{email}, #{createTime}, #{idCard}, #{phone});
+    </insert>
+
+    <select id="findByPhoneAndPwd" resultType="User">
+        SELECT id,user_name FROM user WHERE phone = #{phone} AND pwd = #{pwd}
+    </select>
+
+</mapper>
