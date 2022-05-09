@@ -27,5 +27,23 @@ public interface UserService {
      */
     boolean register(RegisterRequest registerRequest);
 
+    /**
+     * 用户登录
+     * @param loginRequest
+     * @return
+     */
     String login(LoginRequest loginRequest);
+
+    /**
+     * 发送邮箱验证码
+     * @param email
+     */
+    boolean sendEmailCode(Map<String, String> userEmail);
+
+    /**
+     * 验证邮箱验证码
+     * @param emailAndCode
+     * @return
+     */
+    boolean verifyEmailCode(Map<String, String> emailAndCode);
 }

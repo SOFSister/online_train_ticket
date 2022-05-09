@@ -1,17 +1,14 @@
 package cn.feedsheep.online_train_ticket.controller;
 
-import cn.feedsheep.online_train_ticket.model.entity.User;
 import cn.feedsheep.online_train_ticket.model.request.LoginRequest;
 import cn.feedsheep.online_train_ticket.model.request.RegisterRequest;
 import cn.feedsheep.online_train_ticket.service.UserService;
 import cn.feedsheep.online_train_ticket.utils.JsonData;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+
 
 /**
  * Created with IntelliJ IDEA.
@@ -32,6 +29,7 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+
     @PostMapping("/register")
     public JsonData register(@RequestBody RegisterRequest registerRequest){
         return userService.register(registerRequest) ? JsonData.buildSuccess() : JsonData.buildError("注册失败，请重试");
@@ -43,4 +41,17 @@ public class UserController {
         return token != null ? JsonData.buildSuccess(token) : JsonData.buildError("登录失败，账号或密码错误");
     }
 
+    @PostMapping("/send_email_code")
+    public JsonData sendEmailCode(@RequestBody Map<String, String> email){
+
+        return userService.sendEmailCode(email) ? JsonData.buildSuccess() : JsonData.buildError("发送邮件失败，请重试");
+
+    }
+
+    @PostMapping("/verify_email_code")
+    public JsonData verifyEmailCode(@RequestBody Map<String, String> emailAndCode){
+
+        return userService.verifyEmailCode(emailAndCode) ? JsonData.buildSuccess() : JsonData.buildError("验证码错误，请重试");
+
+    }
 }

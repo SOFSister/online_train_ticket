@@ -5,14 +5,14 @@ import cn.feedsheep.online_train_ticket.model.entity.User;
 import cn.feedsheep.online_train_ticket.model.request.LoginRequest;
 import cn.feedsheep.online_train_ticket.model.request.RegisterRequest;
 import cn.feedsheep.online_train_ticket.service.UserService;
-import cn.feedsheep.online_train_ticket.utils.CommonUtils;
-import cn.feedsheep.online_train_ticket.utils.JWTUtils;
-import cn.feedsheep.online_train_ticket.utils.MatcherUtils;
+import cn.feedsheep.online_train_ticket.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,6 +33,12 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private EmailUtils emailUtils;
+
+    @Autowired
+    private CacheService cacheService;
 
     @Override
     public boolean register(RegisterRequest registerRequest) {
@@ -69,6 +75,53 @@ public class UserServiceImpl implements UserService {
         return token;
     }
 
+    @Override
+    public boolean sendEmailCode(Map<String, String> userEmail) {
+        String email = userEmail.getOrDefault("userMail",null);
+        if(email == null || !MatcherUtils.isEmail(email)){
+            return false;
+        }else{
+            String emailCode = "";
+            Random random = new Random();
+
+            for (int i = 0; i < 6; i++) {
+                emailCode = emailCode + random.nextInt(10);
+            }
+
+            //存入redis
+            String emailCodeKey = getEmailCodeRedisKeyByEmail(email);
+            cacheService.add(emailCodeKey,emailCode,5,TimeUnit.MINUTES);
+
+            System.out.println(cacheService.get(emailCodeKey));
+
+            //发送邮件
+            emailUtils.sendSimpleTextMailActual("火车票网上购票系统","注册验证码：" + emailCode + "\n验证码五分钟内有效，请勿将验证码泄露给他人", new String[]{email},null,null,null);
+            return true;
+        }
+    }
+
+    @Override
+    public boolean verifyEmailCode(Map<String, String> emailAndCode) {
+
+        String email = emailAndCode.getOrDefault("userMail",null);
+        String code = emailAndCode.getOrDefault("mailCode",null);
+
+        if(email == null || code == null || !MatcherUtils.isEmail(email)){
+            return false;
+        }else{
+            String emailCodeKey = getEmailCodeRedisKeyByEmail(email);
+
+            String aimCode = cacheService.get(emailCodeKey);
+
+            if(aimCode.equals(code)){
+                return true;
+            }else{
+                return false;
+            }
+
+        }
+    }
+
     /**
      * 判断请求数据是否正确
      * @param registerRequest
@@ -87,6 +140,10 @@ public class UserServiceImpl implements UserService {
                 MatcherUtils.isIDNumber(registerRequest.getUserIdCard()) &&
                 MatcherUtils.isPhoneNumber(registerRequest.getUserPhone());
 
+    }
+
+    private String getEmailCodeRedisKeyByEmail(String email){
+        return "VerifyCode" + email + "code";
     }
 
 }
