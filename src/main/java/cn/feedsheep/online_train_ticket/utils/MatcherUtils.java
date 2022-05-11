@@ -1,5 +1,7 @@
 package cn.feedsheep.online_train_ticket.utils;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -133,4 +135,23 @@ public class MatcherUtils {
         //进行正则匹配
         return m.matches();
     }
+
+    /**
+     * 校验时间格式是否为 yyyy-MM-dd HH:mm:ss
+     * @param date
+     * @return
+     */
+    public static Boolean isDateVail(String date) {
+        //用于指定 日期/时间 模式
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        boolean flag = true;
+        try {
+            //Java 8 新添API 用于解析日期和时间
+            LocalDateTime.parse(date, dtf);
+        } catch (Exception e) {
+            flag = false;
+        }
+        return flag;
+    }
+
 }

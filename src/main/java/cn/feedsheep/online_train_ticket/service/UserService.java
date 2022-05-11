@@ -36,7 +36,7 @@ public interface UserService {
 
     /**
      * 发送邮箱验证码
-     * @param email
+     * @param userEmail
      */
     boolean sendEmailCode(Map<String, String> userEmail);
 
@@ -46,4 +46,11 @@ public interface UserService {
      * @return
      */
     boolean verifyEmailCode(Map<String, String> emailAndCode);
+
+    /**
+     * id返回用户信息
+     * @param userId
+     * @return
+     */
+    User userInfoByUserId(Integer userId);
 }

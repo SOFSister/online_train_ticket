@@ -122,6 +122,12 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    public User userInfoByUserId(Integer userId) {
+        User user = userMapper.findByUserId(userId);
+        return user;
+    }
+
     /**
      * 判断请求数据是否正确
      * @param registerRequest

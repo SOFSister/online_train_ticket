@@ -1,5 +1,6 @@
 package cn.feedsheep.online_train_ticket.controller;
 
+import cn.feedsheep.online_train_ticket.model.entity.User;
 import cn.feedsheep.online_train_ticket.model.request.LoginRequest;
 import cn.feedsheep.online_train_ticket.model.request.RegisterRequest;
 import cn.feedsheep.online_train_ticket.service.UserService;
@@ -7,6 +8,7 @@ import cn.feedsheep.online_train_ticket.utils.JsonData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 
@@ -53,5 +55,19 @@ public class UserController {
 
         return userService.verifyEmailCode(emailAndCode) ? JsonData.buildSuccess() : JsonData.buildError("验证码错误，请重试");
 
+    }
+
+    @GetMapping("/user_info_by_token")
+    public JsonData userInfoByToken(HttpServletRequest request){
+        Integer userId = (Integer) request.getAttribute("user_id");
+
+        if(userId == null){
+            return JsonData.buildError("获取用户信息错误，请重试");
+        }else{
+
+            User user = userService.userInfoByUserId(userId);
+
+            return JsonData.buildSuccess(user);
+        }
     }
 }
