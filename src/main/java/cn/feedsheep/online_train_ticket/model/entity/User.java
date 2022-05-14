@@ -1,5 +1,6 @@
 package cn.feedsheep.online_train_ticket.model.entity;
 
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -33,6 +34,7 @@ import java.util.Date;
  * ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8_bin;
  */
 @Data
+@TableName("user")
 public class User {
 
     /**

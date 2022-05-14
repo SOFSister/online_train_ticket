@@ -12,6 +12,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -42,12 +43,13 @@ class TicketMapperTest extends OnlineTrainTicketApplicationTests {
 
     @Test
     void test(){
-        System.out.println(System.currentTimeMillis());
+
     }
 
     @Test
     void save() {
-        Random random = new Random();
+        System.out.println(UUID.randomUUID().toString().replace("-",""));
+        /*Random random = new Random();
         Ticket ticket = new Ticket();
         for (int k = 0; k < 30; k++) {//30天
             for (int i = 0; i < 5; i++) {//A
@@ -112,7 +114,7 @@ class TicketMapperTest extends OnlineTrainTicketApplicationTests {
                     }
                 }
             }
-        }
+        }*/
     }
 
 

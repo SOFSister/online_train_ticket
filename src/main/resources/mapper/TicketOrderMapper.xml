@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="cn.feedsheep.online_train_ticket.mapper.TicketOrderMapper">
+
+
+    <insert id="save" parameterType="cn.feedsheep.online_train_ticket.model.entity.TicketOrder" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        INSERT INTO `online_train_ticket`.`ticket_order`(`out_trade_no`, `state`, `user_id`, `ticket_id`, `seat_level`, `seat_no`,`create_time`)
+        VALUES (#{outTradeNo}, #{state}, #{userId}, #{ticketId}, #{seatLevel}, #{seatNo},#{createTime});
+    </insert>
+
+    <select id="selectByTickedIdAndUserId"
+            resultType="cn.feedsheep.online_train_ticket.model.entity.TicketOrder">
+        SELECT id FROM ticket_order where user_id = #{userId} AND ticket_id = #{ticketId} AND state != 2
+    </select>
+
+    <select id="selectOrderInfoById" resultType="java.util.Map">
+        SELECT `user_name` userName,`departure_station` departureStation,`next_station` nextStation,`departure_time` departureTime,
+            `arrival_time` arrivalTime,`train_number` trainNumber,`business_price` businessPrice,`first_price` firstPrice,`second_price` secondPrice,
+            `standing_price` standingPrice,`out_trade_no` outTradeNo,`state`,`seat_level` seatLevel,`seat_no` seatNo
+        FROM user,ticket,ticket_order
+        WHERE ticket_order.id = #{orderId} AND ticket_order.user_id = user.id AND ticket_order.ticket_id = ticket.id
+    </select>
+
+
+</mapper>

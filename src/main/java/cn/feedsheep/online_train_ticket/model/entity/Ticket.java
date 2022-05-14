@@ -1,6 +1,9 @@
 package cn.feedsheep.online_train_ticket.model.entity;
 
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.Version;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
@@ -33,11 +36,13 @@ import java.util.Date;
  *   `second_price` int DEFAULT NULL COMMENT '二等座价格（单位分）',
  *   `standing_price` int DEFAULT NULL COMMENT '站票价格（单位分）',
  *   `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+ *   `version` int NOT NULL DEFAULT '0' COMMENT '乐观锁版本号',
  *   PRIMARY KEY (`id`),
  *   KEY `departure_station` (`departure_station`(10),`next_station`(10)) USING BTREE COMMENT '始发站和下一站的联合索引'
- * ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8_bin;
+ * ) ENGINE=InnoDB AUTO_INCREMENT=7204 DEFAULT CHARSET=utf8mb3 COLLATE=utf8_bin;
  */
 @Data
+@TableName("ticket")
 public class Ticket {
 
     /**
@@ -129,4 +134,10 @@ public class Ticket {
     //@JsonProperty("create_time")
     @JsonFormat(pattern = "yyyy:MM:dd HH:mm:ss",timezone = "GMT+8")
     private Date createTime;
+
+    /**
+     * 乐观锁版本号
+     */
+    @Version
+    private Integer version;
 }

@@ -1,6 +1,7 @@
 package cn.feedsheep.online_train_ticket.mapper;
 
 import cn.feedsheep.online_train_ticket.model.entity.Ticket;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -20,7 +21,7 @@ import java.util.List;
  * @Description :
  */
 @Repository
-public interface TicketMapper {
+public interface TicketMapper extends BaseMapper<Ticket> {
 
     int save(Ticket ticket);
 
