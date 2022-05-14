@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -53,4 +54,32 @@ public class TicketOrderController {
             }
         }
     }
+
+    @PostMapping("/pay")
+    public JsonData payForOrder(@RequestBody Map<String,String> orderPayMap, HttpServletRequest request){
+        String outTradeNo = orderPayMap.get("outTradeNo");
+        Integer userId = (Integer) request.getAttribute("user_id");
+
+        if(outTradeNo == null || userId == null){
+            return JsonData.buildError("支付失败，请重试");
+        }else{
+
+            return ticketOrderService.payForOrder(outTradeNo,userId) ? JsonData.buildSuccess() : JsonData.buildError("支付失败，请重试");
+
+        }
+    }
+
+    @GetMapping("/order_list")
+    public JsonData getOrderList(HttpServletRequest request){
+        Integer userId = (Integer) request.getAttribute("user_id");
+        if(userId == null){
+            return JsonData.buildError("获取订单列表失败，请重试");
+        }else{
+
+            List<Map<String,Object>> mapList = ticketOrderService.getOrderList(userId);
+
+            return JsonData.buildSuccess(mapList);
+        }
+    }
+
 }

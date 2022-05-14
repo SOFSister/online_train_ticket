@@ -3,6 +3,7 @@ package cn.feedsheep.online_train_ticket.service;
 import cn.feedsheep.online_train_ticket.model.entity.TicketOrder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -18,5 +19,11 @@ import java.util.Map;
  * @Description :
  */
 public interface TicketOrderService {
+
     Map<String,Object> saveTicketOrder(Integer userId, Integer ticketId, Integer seatNo) throws Exception;
+
+    boolean payForOrder(String outTradeNo, Integer userId);
+
+    List<Map<String, Object>> getOrderList(Integer userId);
+
 }

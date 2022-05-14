@@ -9,6 +9,16 @@
         VALUES (#{outTradeNo}, #{state}, #{userId}, #{ticketId}, #{seatLevel}, #{seatNo},#{createTime});
     </insert>
 
+    <update id="updateToTimeOutIfStateZero">
+        UPDATE `online_train_ticket`.`ticket_order`
+        SET `state` = 2 WHERE `id` = #{orderId} AND `state` = 0;
+    </update>
+
+    <update id="updateStateByOutTradeNoAndUserId">
+        UPDATE `online_train_ticket`.`ticket_order`
+        SET `state` = 1 WHERE `out_trade_no` = #{outTradeNo} AND `user_id` = #{userId} AND `state` = 0;
+    </update>
+
     <select id="selectByTickedIdAndUserId"
             resultType="cn.feedsheep.online_train_ticket.model.entity.TicketOrder">
         SELECT id FROM ticket_order where user_id = #{userId} AND ticket_id = #{ticketId} AND state != 2
@@ -20,6 +30,14 @@
             `standing_price` standingPrice,`out_trade_no` outTradeNo,`state`,`seat_level` seatLevel,`seat_no` seatNo
         FROM user,ticket,ticket_order
         WHERE ticket_order.id = #{orderId} AND ticket_order.user_id = user.id AND ticket_order.ticket_id = ticket.id
+    </select>
+
+    <select id="findByUserId" resultType="java.util.Map">
+        SELECT `user_name` userName,`departure_station` departureStation,`next_station` nextStation,`departure_time` departureTime,
+               `arrival_time` arrivalTime,`train_number` trainNumber,`business_price` businessPrice,`first_price` firstPrice,`second_price` secondPrice,
+               `standing_price` standingPrice,`out_trade_no` outTradeNo,`state`,`seat_level` seatLevel,`seat_no` seatNo
+        FROM user,ticket,ticket_order
+        WHERE ticket_order.user_id = #{userId} AND ticket_order.user_id = user.id AND ticket_order.ticket_id = ticket.id
     </select>
 
 

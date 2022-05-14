@@ -11,16 +11,14 @@ import cn.feedsheep.online_train_ticket.mapper.TicketOrderMapper;
 import cn.feedsheep.online_train_ticket.model.entity.Ticket;
 import cn.feedsheep.online_train_ticket.model.entity.TicketOrder;
 import cn.feedsheep.online_train_ticket.service.TicketOrderService;
+import cn.feedsheep.online_train_ticket.utils.DelayQueueUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.Map;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -42,6 +40,11 @@ public class TicketOrderServiceImpl implements TicketOrderService {
 
     @Autowired
     private TicketOrderMapper ticketOrderMapper;
+
+    @Autowired
+    private DelayQueueUtils delayQueueUtils;
+
+    private final Integer DELAY_TIME = 30000;
 
     @Override
     @Transactional
@@ -84,7 +87,8 @@ public class TicketOrderServiceImpl implements TicketOrderService {
 
             ticketOrderMapper.save(ticketOrder);
 
-            //下单成功 放入延时消息队列 返回成功
+            //下单成功 放入延时消息队列
+            delayQueueUtils.sendDelayMsg(String.valueOf(ticketOrder.getId()),DELAY_TIME);
 
             //查询所有需要的信息放入map并返回
             Map<String,Object> responseMap = ticketOrderMapper.selectOrderInfoById(ticketOrder.getId());
@@ -98,6 +102,22 @@ public class TicketOrderServiceImpl implements TicketOrderService {
         }
 
 
+    }
+
+    @Override
+    public boolean payForOrder(String outTradeNo, Integer userId) {
+
+        int i = ticketOrderMapper.updateStateByOutTradeNoAndUserId(1,outTradeNo,userId);
+
+        return i > 0 ? true : false;
+    }
+
+    @Override
+    public List<Map<String, Object>> getOrderList(Integer userId) {
+
+        List<Map<String,Object>> mapList = ticketOrderMapper.findByUserId(userId);
+
+        return mapList;
     }
 
 
