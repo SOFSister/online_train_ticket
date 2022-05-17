@@ -1,5 +1,6 @@
 package cn.feedsheep.online_train_ticket.service.impl;
 
+import cn.feedsheep.online_train_ticket.exception.TicketOrderException;
 import cn.feedsheep.online_train_ticket.factory.BuyTicketBasic;
 import cn.feedsheep.online_train_ticket.factory.TicketPriceBasic;
 import cn.feedsheep.online_train_ticket.factory.factory.BuyTicketFactory;
@@ -53,7 +54,7 @@ public class TicketOrderServiceImpl implements TicketOrderService {
         //判断是否买过这张票
         TicketOrder hasTicketOrder = ticketOrderMapper.selectByTickedIdAndUserId(ticketId,userId);
         if(hasTicketOrder != null){
-            return null;
+            throw new TicketOrderException(8,"请不要重复下单");
         }
 
         //判断是否还有余票

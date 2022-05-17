@@ -40,20 +40,20 @@ public class UserController {
     @PostMapping("/login")
     public JsonData login(@RequestBody LoginRequest loginRequest){
         String token = userService.login(loginRequest);
-        return token != null ? JsonData.buildSuccess(token) : JsonData.buildError("登录失败，账号或密码错误");
+        return token != null ? JsonData.buildSuccess(token) : JsonData.buildError(1,"登录失败，账号或密码错误");
     }
 
     @PostMapping("/send_email_code")
     public JsonData sendEmailCode(@RequestBody Map<String, String> email){
 
-        return userService.sendEmailCode(email) ? JsonData.buildSuccess() : JsonData.buildError("发送邮件失败，请重试");
+        return userService.sendEmailCode(email) ? JsonData.buildSuccess() : JsonData.buildError(4,"发送邮件失败，请重试");
 
     }
 
     @PostMapping("/verify_email_code")
     public JsonData verifyEmailCode(@RequestBody Map<String, String> emailAndCode){
 
-        return userService.verifyEmailCode(emailAndCode) ? JsonData.buildSuccess() : JsonData.buildError("验证码错误，请重试");
+        return userService.verifyEmailCode(emailAndCode) ? JsonData.buildSuccess() : JsonData.buildError(6,"验证码错误，请重试");
 
     }
 
@@ -62,7 +62,7 @@ public class UserController {
         Integer userId = (Integer) request.getAttribute("user_id");
 
         if(userId == null){
-            return JsonData.buildError("获取用户信息错误，请重试");
+            return JsonData.buildError(-2,"获取用户信息错误，请重试");
         }else{
 
             User user = userService.userInfoByUserId(userId);

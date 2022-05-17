@@ -28,10 +28,29 @@ public class CustomExceptionHandler {
     @ResponseBody
     public JsonData handle(Exception e){
 
-        logger.error("[ 系统异常 ]{}",e);
+        if(e instanceof UserException){
 
-        return JsonData.buildError("全局异常，未知错误");
+            UserException loginException = (UserException) e;
 
+            return JsonData.buildError(loginException.getCode(),loginException.getMsg());
+
+        }else if(e instanceof DataException){
+
+            DataException dataException = (DataException) e;
+
+            return JsonData.buildError(dataException.getCode(),dataException.getMsg());
+
+        }else if(e instanceof TicketOrderException){
+
+            TicketOrderException ticketOrderException = (TicketOrderException) e;
+
+            return JsonData.buildError(ticketOrderException.getCode(),ticketOrderException.getMsg());
+
+        } else{
+            logger.error("[ 系统异常 ]{}",e);
+
+            return JsonData.buildError("全局异常，未知错误");
+        }
     }
 
 }

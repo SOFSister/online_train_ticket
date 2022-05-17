@@ -1,5 +1,6 @@
 package cn.feedsheep.online_train_ticket.controller;
 
+import cn.feedsheep.online_train_ticket.exception.DataException;
 import cn.feedsheep.online_train_ticket.model.entity.Ticket;
 import cn.feedsheep.online_train_ticket.model.entity.TicketOrder;
 import cn.feedsheep.online_train_ticket.service.TicketOrderService;
@@ -32,26 +33,19 @@ public class TicketOrderController {
     private TicketOrderService ticketOrderService;
 
     @PostMapping("/save")
-    public JsonData saveTicketOrder(@RequestBody Map<String,String> ticketOrderMap, HttpServletRequest request){
+    public JsonData saveTicketOrder(@RequestBody Map<String,String> ticketOrderMap, HttpServletRequest request) throws Exception {
         Integer ticketId = Integer.valueOf(ticketOrderMap.getOrDefault("ticketId",null));
         Integer seatNo = Integer.valueOf(ticketOrderMap.getOrDefault("seatNo",null));
 
         Integer userId = (Integer) request.getAttribute("user_id");
         if(ticketId == null || seatNo == null || userId == null){
-            return JsonData.buildError("下单失败，请重试");
+            throw new DataException(-2,"存在数据为null");
         }else{
 
-            try {
+            Map<String,Object> map = ticketOrderService.saveTicketOrder(userId,ticketId,seatNo);
 
-                Map<String,Object> map = ticketOrderService.saveTicketOrder(userId,ticketId,seatNo);
+            return map != null ? JsonData.buildSuccess(map) : JsonData.buildError(7,"下单失败，请重试");
 
-                return map != null ? JsonData.buildSuccess(map) : JsonData.buildError("下单失败，请重试");
-
-            }catch (Exception exception){
-
-                return JsonData.buildError("下单失败，请重试");
-
-            }
         }
     }
 
@@ -61,10 +55,10 @@ public class TicketOrderController {
         Integer userId = (Integer) request.getAttribute("user_id");
 
         if(outTradeNo == null || userId == null){
-            return JsonData.buildError("支付失败，请重试");
+            throw new DataException(-2,"存在数据为null");
         }else{
 
-            return ticketOrderService.payForOrder(outTradeNo,userId) ? JsonData.buildSuccess() : JsonData.buildError("支付失败，请重试");
+            return ticketOrderService.payForOrder(outTradeNo,userId) ? JsonData.buildSuccess() : JsonData.buildError(9,"支付失败，请重试");
 
         }
     }
@@ -73,7 +67,7 @@ public class TicketOrderController {
     public JsonData getOrderList(HttpServletRequest request){
         Integer userId = (Integer) request.getAttribute("user_id");
         if(userId == null){
-            return JsonData.buildError("获取订单列表失败，请重试");
+            throw new DataException(-2,"存在数据为null");
         }else{
 
             List<Map<String,Object>> mapList = ticketOrderService.getOrderList(userId);

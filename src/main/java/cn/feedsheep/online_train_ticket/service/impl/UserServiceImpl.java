@@ -1,5 +1,7 @@
 package cn.feedsheep.online_train_ticket.service.impl;
 
+import cn.feedsheep.online_train_ticket.exception.DataException;
+import cn.feedsheep.online_train_ticket.exception.UserException;
 import cn.feedsheep.online_train_ticket.mapper.UserMapper;
 import cn.feedsheep.online_train_ticket.model.entity.User;
 import cn.feedsheep.online_train_ticket.model.request.LoginRequest;
@@ -13,8 +15,6 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Created with IntelliJ IDEA.
@@ -78,8 +78,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean sendEmailCode(Map<String, String> userEmail) {
         String email = userEmail.getOrDefault("userMail",null);
-        if(email == null || !MatcherUtils.isEmail(email)){
-            return false;
+        if(email == null){
+            throw new DataException(-2,"存在数据为null");
+        }else if(MatcherUtils.isEmail(email) == false){
+
+            throw new UserException(2,"邮箱格式错误");
+
         }else{
             String emailCode = "";
             Random random = new Random();
@@ -96,6 +100,7 @@ public class UserServiceImpl implements UserService {
 
             //发送邮件
             emailUtils.sendSimpleTextMailActual("火车票网上购票系统","注册验证码：" + emailCode + "\n验证码五分钟内有效，请勿将验证码泄露给他人", new String[]{email},null,null,null);
+
             return true;
         }
     }
@@ -106,8 +111,10 @@ public class UserServiceImpl implements UserService {
         String email = emailAndCode.getOrDefault("userMail",null);
         String code = emailAndCode.getOrDefault("mailCode",null);
 
-        if(email == null || code == null || !MatcherUtils.isEmail(email)){
-            return false;
+        if(email == null || code == null){
+            throw new DataException(-2,"存在数据为null");
+        }else if(MatcherUtils.isEmail(email) == false){
+            throw new UserException(2,"邮箱格式错误");
         }else{
             String emailCodeKey = getEmailCodeRedisKeyByEmail(email);
 
@@ -138,13 +145,20 @@ public class UserServiceImpl implements UserService {
         if(registerRequest.getPassword() == null || registerRequest.getUserMail() == null ||
         registerRequest.getUserIdCard() == null || registerRequest.getUserName() == null ||
         registerRequest.getUserPhone() == null){
-            return false;
+            throw new DataException(-2,"存在数据为null");
         }
 
         //判断手机号、身份证号、邮箱正则表达式
-        return MatcherUtils.isEmail(registerRequest.getUserMail()) &&
-                MatcherUtils.isIDNumber(registerRequest.getUserIdCard()) &&
-                MatcherUtils.isPhoneNumber(registerRequest.getUserPhone());
+        if(MatcherUtils.isEmail(registerRequest.getUserMail()) == false){
+            throw new UserException(2,"邮箱格式错误");
+        }
+        if(MatcherUtils.isIDNumber(registerRequest.getUserIdCard()) == false){
+            throw new UserException(3,"身份证格式错误");
+        }
+        if(MatcherUtils.isPhoneNumber(registerRequest.getUserPhone()) == false){
+            throw new UserException(4,"电话号码格式错误");
+        }
+        return true;
 
     }
 
