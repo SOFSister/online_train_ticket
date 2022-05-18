@@ -15,6 +15,30 @@
 
     </insert>
 
+    <update id="addStandingTicket">
+        UPDATE `online_train_ticket`.`ticket`
+        SET `standing_inventory` = `standing_inventory` + 1, `version` = `version` + 1
+        WHERE `id` = #{ticketId};
+    </update>
+
+    <update id="addSecondTicket">
+        UPDATE `online_train_ticket`.`ticket`
+        SET `second_inventory` = `second_inventory` + 1, `version` = `version` + 1
+        WHERE `id` = #{ticketId};
+    </update>
+
+    <update id="addFirstTicket">
+        UPDATE `online_train_ticket`.`ticket`
+        SET `first_inventory` = `first_inventory` + 1, `version` = `version` + 1
+        WHERE `id` = #{ticketId};
+    </update>
+
+    <update id="addBusinessTicket">
+        UPDATE `online_train_ticket`.`ticket`
+        SET `business_inventory` = `business_inventory` + 1, `version` = `version` + 1
+        WHERE `id` = #{ticketId};
+    </update>
+
     <select id="findByDateAndStation" resultType="Ticket">
 
         SELECT * FROM `ticket`

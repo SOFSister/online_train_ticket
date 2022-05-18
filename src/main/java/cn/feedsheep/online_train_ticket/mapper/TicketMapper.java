@@ -27,4 +27,13 @@ public interface TicketMapper extends BaseMapper<Ticket> {
 
     List<Ticket> findByDateAndStation(@Param("dateStart") Date dateStart,@Param("dateEnd") Date dateEnd,
                                       @Param("startStation") String startStation,@Param("endStation") String endStation);
+
+    int addBusinessTicket(@Param("ticketId") Integer ticketId);
+
+    int addFirstTicket(@Param("ticketId")Integer ticketId);
+
+    int addSecondTicket(@Param("ticketId")Integer ticketId);
+
+    int addStandingTicket(@Param("ticketId")Integer ticketId);
+
 }

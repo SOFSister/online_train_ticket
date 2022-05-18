@@ -63,6 +63,20 @@ public class TicketOrderController {
         }
     }
 
+    @PostMapping("/cancel")
+    public JsonData cancelOrder(@RequestBody Map<String,String> orderCancelMap, HttpServletRequest request){
+        String outTradeNo = orderCancelMap.get("outTradeNo");
+        Integer userId = (Integer) request.getAttribute("user_id");
+
+        if(outTradeNo == null || userId == null){
+            throw new DataException(-2,"存在数据为null");
+        }else{
+
+            return ticketOrderService.cancelOrder(outTradeNo,userId) ? JsonData.buildSuccess() : JsonData.buildError(10,"取消订单失败，请重试");
+
+        }
+    }
+
     @GetMapping("/order_list")
     public JsonData getOrderList(HttpServletRequest request){
         Integer userId = (Integer) request.getAttribute("user_id");

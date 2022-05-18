@@ -26,4 +26,6 @@ public interface TicketOrderService {
 
     List<Map<String, Object>> getOrderList(Integer userId);
 
+    boolean cancelOrder(String outTradeNo, Integer userId);
+
 }

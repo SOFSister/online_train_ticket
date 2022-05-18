@@ -35,4 +35,6 @@ public interface TicketOrderMapper extends BaseMapper<TicketOrder> {
 
     List<Map<String, Object>> findByUserId(@Param("userId") Integer userId);
 
+    TicketOrder selectByOutTradeNoAndUserId(@Param("outTradeNo") String outTradeNo,@Param("userId") Integer userId);
+
 }

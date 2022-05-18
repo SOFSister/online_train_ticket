@@ -13,6 +13,9 @@ import cn.feedsheep.online_train_ticket.model.entity.Ticket;
 import cn.feedsheep.online_train_ticket.model.entity.TicketOrder;
 import cn.feedsheep.online_train_ticket.service.TicketOrderService;
 import cn.feedsheep.online_train_ticket.utils.DelayQueueUtils;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
@@ -34,6 +37,7 @@ import java.util.*;
  * @Description :
  */
 @Service
+@Slf4j
 public class TicketOrderServiceImpl implements TicketOrderService {
 
     @Autowired
@@ -45,7 +49,7 @@ public class TicketOrderServiceImpl implements TicketOrderService {
     @Autowired
     private DelayQueueUtils delayQueueUtils;
 
-    private final Integer DELAY_TIME = 30000;
+    private final Integer DELAY_TIME = 60000;
 
     @Override
     @Transactional
@@ -89,7 +93,8 @@ public class TicketOrderServiceImpl implements TicketOrderService {
             ticketOrderMapper.save(ticketOrder);
 
             //下单成功 放入延时消息队列
-            delayQueueUtils.sendDelayMsg(String.valueOf(ticketOrder.getId()),DELAY_TIME);
+            ObjectMapper objectMapper = new ObjectMapper();
+            delayQueueUtils.sendDelayMsg(objectMapper.writeValueAsString(ticketOrder),DELAY_TIME);
 
             //查询所有需要的信息放入map并返回
             Map<String,Object> responseMap = ticketOrderMapper.selectOrderInfoById(ticketOrder.getId());
@@ -119,6 +124,41 @@ public class TicketOrderServiceImpl implements TicketOrderService {
         List<Map<String,Object>> mapList = ticketOrderMapper.findByUserId(userId);
 
         return mapList;
+    }
+
+    @Override
+    public boolean cancelOrder(String outTradeNo, Integer userId) {
+
+        TicketOrder ticketOrder = ticketOrderMapper.selectByOutTradeNoAndUserId(outTradeNo,userId);
+        if(ticketOrder == null){
+
+            return false;
+
+        }else{
+
+            //当订单状态为0（未支付时），将状态改为2（取消）
+            Integer orderId = ticketOrder.getId();
+
+            int i = ticketOrderMapper.updateToTimeOutIfStateZero(orderId);
+            if (i > 0){
+                int seatNo = ticketOrder.getSeatLevel();
+                int changeRow = 0;
+                if(seatNo == 0){
+                    changeRow = ticketMapper.addBusinessTicket(ticketOrder.getTicketId());
+                }else if(seatNo == 1){
+                    changeRow = ticketMapper.addFirstTicket(ticketOrder.getTicketId());
+                }else if(seatNo == 2){
+                    changeRow = ticketMapper.addSecondTicket(ticketOrder.getTicketId());
+                }else if(seatNo == 3){
+                    changeRow = ticketMapper.addStandingTicket(ticketOrder.getTicketId());
+                }
+
+                if(changeRow == 0){
+                    log.error("添加库存失败");
+                }
+            }
+        }
+        return true;
     }
 
 

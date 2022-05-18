@@ -28,4 +28,6 @@ public interface UserMapper {
 
     User findByUserId(@Param("id") Integer userId);
 
+    int selectByPhoneOrEmail(@Param("userPhone") String userPhone,@Param("userMail") String userMail);
+
 }

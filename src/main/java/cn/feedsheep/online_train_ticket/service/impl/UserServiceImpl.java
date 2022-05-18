@@ -44,6 +44,11 @@ public class UserServiceImpl implements UserService {
     public boolean register(RegisterRequest registerRequest) {
 
         if(checkRegisterRequest(registerRequest)){
+
+            int rows = userMapper.selectByPhoneOrEmail(registerRequest.getUserPhone(),registerRequest.getUserMail());
+            if(rows > 0){
+                throw new UserException(11,"邮箱或手机号已被创建");
+            }
             User user = new User();
 
             user.setCreateTime(new Date());

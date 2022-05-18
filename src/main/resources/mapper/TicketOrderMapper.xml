@@ -39,6 +39,12 @@
         FROM user,ticket,ticket_order
         WHERE ticket_order.user_id = #{userId} AND ticket_order.user_id = user.id AND ticket_order.ticket_id = ticket.id
     </select>
+    <select id="selectByOutTradeNoAndUserId"
+            resultType="cn.feedsheep.online_train_ticket.model.entity.TicketOrder">
+
+        SELECT id,ticket_id,seat_level FROM ticket_order where user_id = #{userId} AND out_trade_no = #{outTradeNo} AND state = 0
+
+    </select>
 
 
 </mapper>
