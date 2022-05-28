@@ -125,6 +125,10 @@ public class UserServiceImpl implements UserService {
 
             String aimCode = cacheService.get(emailCodeKey);
 
+            if (aimCode == null){
+                throw new UserException(5,"验证码过期");
+            }
+
             if(aimCode.equals(code)){
                 return true;
             }else{

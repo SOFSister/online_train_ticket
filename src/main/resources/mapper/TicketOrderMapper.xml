@@ -37,7 +37,7 @@
                `arrival_time` arrivalTime,`train_number` trainNumber,`business_price` businessPrice,`first_price` firstPrice,`second_price` secondPrice,
                `standing_price` standingPrice,`out_trade_no` outTradeNo,`state`,`seat_level` seatLevel,`seat_no` seatNo
         FROM user,ticket,ticket_order
-        WHERE ticket_order.user_id = #{userId} AND ticket_order.user_id = user.id AND ticket_order.ticket_id = ticket.id
+        WHERE ticket_order.user_id = #{userId} AND ticket_order.user_id = user.id AND ticket_order.ticket_id = ticket.id ORDER BY ticket_order.`create_time` DESC
     </select>
     <select id="selectByOutTradeNoAndUserId"
             resultType="cn.feedsheep.online_train_ticket.model.entity.TicketOrder">

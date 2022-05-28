@@ -204,7 +204,7 @@ public class CacheService {
             value = redisTemplate.opsForValue().get(DEFAULT_KEY_PREFIX + key);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            throw new UserException(5,"验证码过期");
+            return null;
         }
         return value;
     }

@@ -1,9 +1,11 @@
 package cn.feedsheep.online_train_ticket.controller;
 
+import cn.feedsheep.online_train_ticket.cache.Cache;
 import cn.feedsheep.online_train_ticket.model.entity.User;
 import cn.feedsheep.online_train_ticket.model.request.LoginRequest;
 import cn.feedsheep.online_train_ticket.model.request.RegisterRequest;
 import cn.feedsheep.online_train_ticket.service.UserService;
+import cn.feedsheep.online_train_ticket.utils.CacheService;
 import cn.feedsheep.online_train_ticket.utils.JsonData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +32,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private CacheService redisUtils;
 
 
     @PostMapping("/register")
@@ -59,12 +64,12 @@ public class UserController {
 
     @GetMapping("/user_info_by_token")
     public JsonData userInfoByToken(HttpServletRequest request){
+
         Integer userId = (Integer) request.getAttribute("user_id");
 
         if(userId == null){
             return JsonData.buildError(-2,"获取用户信息错误，请重试");
         }else{
-
             User user = userService.userInfoByUserId(userId);
 
             return JsonData.buildSuccess(user);

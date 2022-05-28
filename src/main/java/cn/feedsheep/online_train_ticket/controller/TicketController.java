@@ -1,5 +1,6 @@
 package cn.feedsheep.online_train_ticket.controller;
 
+import cn.feedsheep.online_train_ticket.cache.Cache;
 import cn.feedsheep.online_train_ticket.model.entity.Ticket;
 import cn.feedsheep.online_train_ticket.service.TicketService;
 import cn.feedsheep.online_train_ticket.utils.JsonData;
@@ -31,6 +32,7 @@ public class TicketController {
     private TicketService ticketService;
 
     @GetMapping("/list_ticket")
+    @Cache(name = "getListTicket")
     public JsonData getListTicket(@RequestParam("dateTick") Long dateTick,@RequestParam("startStation") String startStation,
                                   @RequestParam("endStation") String endStation){
         List<Ticket> ticketList = ticketService.findByDateAndStation(dateTick,startStation,endStation);

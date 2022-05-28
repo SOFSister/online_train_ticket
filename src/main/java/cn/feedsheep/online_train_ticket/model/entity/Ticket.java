@@ -66,12 +66,14 @@ public class Ticket {
      * 发车时间
      */
     //@JsonProperty("departure_time")
+    //@JsonFormat(pattern = "yyyy:MM:dd HH:mm:ss",timezone = "GMT+8")
     private Date departureTime;
 
     /**
      * 到达时间
      */
     //@JsonProperty("arrival_time")
+    //@JsonFormat(pattern = "yyyy:MM:dd HH:mm:ss",timezone = "GMT+8")
     private Date arrivalTime;
 
     /**

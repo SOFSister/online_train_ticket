@@ -49,7 +49,7 @@ public class LoginInterceptor implements HandlerInterceptor {
 
                 if(claims == null){
                     //告诉登录过期，重新登录
-                    CommonUtils.sendJsonMessage(response, JsonData.buildError("登录过期，重新登录"));
+                    CommonUtils.sendJsonMessage(response, JsonData.buildError(-3,"登录过期，请重新登录"));
                     return false;
                 }
                 Integer id = (Integer) claims.get("id");
@@ -65,7 +65,7 @@ public class LoginInterceptor implements HandlerInterceptor {
             e.printStackTrace();
 
         }
-        CommonUtils.sendJsonMessage(response, JsonData.buildError("登录过期，重新登录"));
+        CommonUtils.sendJsonMessage(response, JsonData.buildError(-3,"登录过期，请重新登录"));
         return false;
     }
 
